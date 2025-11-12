@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Меню — CoffeeTime</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Montserrat:wght@300;400;600&family=Playfair+Display:wght@400;600&family=Caveat:wght@500&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root { --accent: #c49b63; --text: #fff; }
+
+body.peace {
+  --accent: #e8d86a;
+  font-family: "Caveat", cursive;
+}
+
+body.energy {
+  --accent: #3b82f6;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+}
+
+body.mystic {
+  --accent: #8b5cf6;
+  font-family: "Playfair Display", serif;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url("wallp.jpg") center/cover fixed no-repeat;
+  color: var(--text);
+  overflow-x: hidden;
+  transition: background 0.8s ease-in-out;
+}
+
+body.dark {
+  background: url("wallp2.jpg") center/cover fixed no-repeat;
+}
+
+/* HEADER */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 15px 20px;
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 100;
+}
+.logo { font-size: 22px; font-weight: bold; color: var(--accent); }
+
+nav a {
+  text-decoration: none;
+  margin: 0 15px;
+  font-weight: bold;
+  color: var(--text);
+}
+
+.burger { display: none; cursor: pointer; color: white; font-size: 26px; }
+
+button, select {
+  padding: 10px 15px;
+  border: none;
+  background: var(--accent);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+/* СЕКЦИИ */
+section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 130px 20px 80px;
+  opacity: 0; transform: translateY(50px);
+  transition: .8s;
+}
+section.visible { opacity: 1; transform: translateY(0); }
+
+/* КАРТОЧКИ */
+.reason-card {
+  border: 2px solid var(--accent);
+  padding: 15px;
+  border-radius: 10px;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px);
+  font-weight: bold;
+  color: white;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.reason-card img {
+  width: 100% !important;
+  height: 250px !important;
+  object-fit: cover !important;
+  border-radius: 14px;
+}
+
+/* ФУТЕР */
+footer {
+  text-align: center;
+  padding: 18px;
+  background: rgba(0,0,0,0.65);
+  font-size: 14px;
+}
+
+/* БУРГЕР */
+@media(max-width:768px){
+  nav { display:none; position:absolute; right:15px; top:65px; background:#0009; padding:10px; border-radius:10px; }
+  nav.open { display:block; }
+  nav a { display:block; margin:10px 0; }
+  .burger { display:block; }
+}
+
+a, a:focus, a:active, a:visited {
+  outline: none !important;
+  box-shadow: none !important;
+  color: inherit !important;
+}
+
+a:hover {
+  transform: scale(1.12);
+  text-shadow: 0 0 6px rgba(255,255,255,0.6);
+}
+
+.menu-grid {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+  max-width: 900px;
+  width: 100%;
+  margin-inline: auto;
+  padding: 0 10px;
+}
+
+.reason-card {
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.reason-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.35);
+}
+
+@media(max-width: 768px) {
+  .menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .reason-card img { height: 200px !important; }
+}
+
+@media(max-width: 480px) {
+  .menu-grid { grid-template-columns: 1fr; }
+  .reason-card img { height: 180px !important; }
+}
+</style>
+</head>
+
+<body>
+<audio id="bg-music" loop><source src="song1.mp3" type="audio/mpeg"></audio>
+
+<header>
+  <div class="logo">CoffeeTime</div>
+  <div class="burger" onclick="toggleMenu()">☰</div>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="about.html">О нас</a>
+    <button id="music-btn" style="margin-left:10px;padding:8px 14px;border-radius:6px;">🎵 Музыка</button>
+    <select id="themeSelect" onchange="setTheme(this.value)">
+      <option value="auto">Авто</option>
+      <option value="light">День</option>
+      <option value="dark">Ночь</option>
+    </select>
+    <select id="moodSelect" onchange="setMood(this.value)">
+      <option value="peace">Уютный</option>
+      <option value="energy">Энергичный</option>
+      <option value="mystic">Загадочный</option>
+    </select>
+  </nav>
+</header>
+
+<section>
+<h1>Меню CoffeeTime</h1>
+<p>Выбирайте любимые напитки и десерты</p>
+<div class="menu-grid">
+  <div class="reason-card"><img src="https://images.unsplash.com/photo-1511920170033-f8396924c348"><a href="espresso.html">☕ Эспрессо — 150₽</a></div>
+  <div class="reason-card"><img src="https://static.tildacdn.com/tild3666-3536-4163-b735-616661666132/billy-kwok-vfiA7rRtj.jpg"><a href="latte.html">🥛 Латте — 250₽</a></div>
+  <div class="reason-card"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93"><a href="cappucino.html">🍫 Капучино — 230₽</a></div>
+  <div class="reason-card"><img src="https://cdn.shopify.com/s/files/1/0022/1393/7252/articles/black-tea-min.jpg?v=1667387066"><a href="tea.html">🍵 Чай — 150₽</a></div>
+  <div class="reason-card"><img src="https://andychef.ru/wp-content/uploads/2014/08/main11.jpg"><a href="cake.html">🍰 Торт — 300₽</a></div>
+  <div class="reason-card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmSyqfn-7FQp6DuPyV1oFykGTUm0Dma664rw&s"><a href="cruassan.html">🥐 Круассан — 120₽</a></div>
+</div>
+</section>
+
+<section>
+<h2>Напитки</h2>
+<div class="menu-grid">
+  <div class="reason-card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDNTBor_iifjg3iRGlmGLsnQPyVp1r1aQHhg&s"><a href="americano.html">🌱 Американо</a></div>
+  <div class="reason-card"><img src="https://travelers-coffee.com/uploads/menus/originals/FWytodJUyz462pQqxtiP.jpg"><a href="raf.html">🔥 Раф</a></div>
+  <div class="reason-card"><img src="https://statics.mixitup.ru/img/uploads/product2/xl/113/1513.jpg"><a href="moko.html">🍮 Мокко</a></div>
+  <div class="reason-card"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsQmhSDWkXEaZVqzrCUY1H-ROjuVYvg-1Rcg&s"><a href="matcha.html">🎧 Матча</a></div>
+  <div class="reason-card"><img src="https://static-sl.insales.ru/files/1/3130/17050682/original/162503772484.jpg?1625037725"><a href="coldcoffee.html">❄️ Холодный кофе</a></div>
+  <div class="reason-card"><img src="https://travelers-coffee.com/uploads/menus/originals/pIl7KIvADZfK5ACortlr.jpg"><a href="lavraf.html">💜 Лавандовый раф</a></div>
+</div>
+</section>
+
+<footer>© 2025 CoffeeTime — аромат, уют и тепло</footer>
+
+<audio id="click" src="https://assets.mixkit.co/active_storage/sfx/1074/1074-preview.mp3"></audio>
+
+<script>
+// Появление секций при скролле и звук клика
+document.addEventListener("click",()=>document.getElementById("click").play().catch(()=>{}));
+const obs=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add("visible")));
+document.querySelectorAll("section").forEach(s=>obs.observe(s));
+
+// Burger menu
+function toggleMenu(){ document.querySelector("nav").classList.toggle("open"); }
+
+// Фоны под настроение
+const moodBackgrounds = {
+  peace: { light: "url('wallp.jpg') center/cover fixed no-repeat", dark: "url('wallp2.jpg') center/cover fixed no-repeat" },
+  energy: "url('2.gif') center/cover fixed no-repeat",
+  mystic: "url('https://wallpapers-clan.com/wp-content/uploads/2024/03/starfall-night-sky-mountains-aesthetic-gif-preview-desktop-wallpaper.gif') center/cover fixed no-repeat"
+};
+
+// Авто-тема день/ночь
+function applyAutoTheme() {
+  const h=new Date().getHours();
+  document.body.classList.toggle("dark", h>19||h<7);
+}
+
+// Выбор темы
+function setTheme(v){
+  localStorage.theme=v;
+  if(document.body.classList.contains("peace")){
+    let theme;
+    if(v==="auto") theme = (new Date().getHours()>19||new Date().getHours()<7) ? "dark" : "light";
+    else theme = v;
+    document.body.style.background = moodBackgrounds.peace[theme];
+  }
+  document.body.classList.toggle("dark", v==="dark" || (v==="auto" && (new Date().getHours()>19||new Date().getHours()<7)));
+}
+
+// Выбор настроения
+function setMood(v){
+  document.body.classList.remove("peace","energy","mystic");
+  document.body.classList.add(v);
+
+  if(v==="peace"){
+    let theme = localStorage.theme === "dark" || (localStorage.theme==="auto" && (new Date().getHours()>19||new Date().getHours()<7)) ? "dark" : "light";
+    document.body.style.background = moodBackgrounds.peace[theme];
+  } else {
+    document.body.style.background = moodBackgrounds[v];
+  }
+}
+
+// Инициализация
+setTheme(localStorage.theme||"auto");
+setMood("peace");
+
+// Музыка
+const musicBtn=document.getElementById("music-btn");
+const bgMusic=document.getElementById("bg-music");
+let musicOn=false;
+musicBtn.onclick=()=>{
+  if(!musicOn){bgMusic.play().catch(()=>{});musicBtn.textContent="🔇 Музыка";musicOn=true;}
+  else{bgMusic.pause();musicBtn.textContent="🎵 Музыка";musicOn=false;}
+};
+</script>
+
+</body>
+</html>

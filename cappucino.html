@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Оформление заказа — CoffeeTime</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root { --accent: #c49b63; --text: #fff; }
+
+/* Базовые фоны и цвета */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: url("wallp.jpg") center/cover fixed no-repeat;
+  color: var(--text);
+  overflow-x: hidden;
+  transition: background 0.8s ease-in-out;
+}
+body.dark { background: url("wallp2.jpg") center/cover fixed no-repeat; }
+body.peace { --accent: #e8d86a; }
+body.energy { --accent: #3b82f6; }
+body.mystic { --accent: #8b5cf6; }
+
+/* HEADER */
+header {
+  position: fixed; top: 0; width: 100%; padding: 15px 20px;
+  background: rgba(0,0,0,0.25); backdrop-filter: blur(8px);
+  display: flex; justify-content: space-between; align-items: center; z-index: 100;
+}
+.logo { font-size: 22px; font-weight: bold; color: var(--accent); }
+nav a { text-decoration: none; margin: 0 15px; font-weight: bold; color: var(--text); }
+.burger { display: none; cursor: pointer; color: white; font-size: 26px; }
+button, select { padding: 10px 15px; border: none; background: var(--accent); color: #000; font-weight: bold; cursor: pointer; border-radius: 6px; }
+
+/* MAIN */
+section {
+  min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+  text-align: center; padding: 130px 20px 80px; opacity: 0; transform: translateY(50px);
+  transition: .8s;
+}
+section.visible { opacity: 1; transform: translateY(0); }
+
+.card {
+  border: 2px solid var(--accent); padding: 15px; border-radius: 10px;
+  background: rgba(0,0,0,0.35); backdrop-filter: blur(6px);
+  font-weight: bold; color: white; display:flex; flex-direction:column; align-items:center;
+  max-width: 300px; margin: 20px auto;
+}
+.card-img-box { width: 100%; max-width: 260px; aspect-ratio: 1/1; border-radius: 14px; overflow: hidden; margin-bottom: 12px; }
+.card img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* FORM */
+form {
+  max-width: 400px; margin: 30px auto; display: flex; flex-direction: column; gap: 15px;
+  background: rgba(0,0,0,0.35); padding: 20px; border-radius: 12px; backdrop-filter: blur(6px);
+}
+form input { padding: 10px; border-radius: 6px; border: none; font-weight: bold; font-size: 14px; }
+form button { background: var(--accent); border: none; color: #000; font-weight: bold; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 16px; }
+
+/* FOOTER */
+footer { text-align: center; padding: 18px; background: rgba(0,0,0,0.65); font-size: 14px; }
+
+/* MOBILE */
+@media(max-width:768px){
+  nav { display:none; position:absolute; right:15px; top:65px; background:#0009; padding:10px; border-radius:10px; flex-direction: column; }
+  nav.open { display:block; }
+  nav a { display:block; margin:10px 0; }
+  .burger { display:block; }
+}
+</style>
+</head>
+
+<body>
+
+<audio id="bg-music" loop src="song1.mp3"></audio>
+
+<header>
+  <div class="logo">CoffeeTime</div>
+  <div class="burger" onclick="toggleMenu()">☰</div>
+  <nav>
+    <a href="index.html">Главная</a>
+    <a href="about.html">О нас</a>
+
+    <button id="music-btn">🎵 Музыка</button>
+
+    <select id="themeSelect" onchange="setTheme(this.value)">
+      <option value="auto">Авто</option>
+      <option value="light">День</option>
+      <option value="dark">Ночь</option>
+    </select>
+
+    <select id="moodSelect" onchange="setMood(this.value)">
+      <option value="peace">Уютный</option>
+      <option value="energy">Энергичный</option>
+      <option value="mystic">Загадочный</option>
+    </select>
+  </nav>
+</header>
+
+<section>
+<h1>Оформление заказа</h1>
+<p>Вы заказываете: <strong>☕ Капучино— 150₽</strong></p>
+
+<div class="card">
+  <div class="card-img-box">
+    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93" alt="Эспрессо">
+  </div>
+  <p>Капучино — ароматный и свежий кофе для бодрого утра.</p>
+</div>
+
+<form>
+  <input type="text" placeholder="Ваше имя" required>
+  <input type="text" placeholder="Адрес доставки" required>
+  <input type="text" placeholder="Номер карты (16 цифр)" maxlength="16" required>
+  <input type="text" placeholder="Срок действия (MM/YY)" required>
+  <input type="text" placeholder="CVC/CVV" maxlength="4" required>
+  <button type="submit">Оплатить и оформить заказ</button>
+</form>
+</section>
+
+<footer>© 2025 CoffeeTime — аромат, уют и тепло</footer>
+
+<audio id="click" src="https://assets.mixkit.co/active_storage/sfx/1074/1074-preview.mp3"></audio>
+
+<script>
+// Звуки и анимация секций
+document.addEventListener("click",()=>document.getElementById("click").play().catch(()=>{}));
+const obs=new IntersectionObserver(e=>e.forEach(x=>x.isIntersecting&&x.target.classList.add("visible")));
+document.querySelectorAll("section").forEach(s=>obs.observe(s));
+
+// Burger menu
+function toggleMenu(){ document.querySelector("nav").classList.toggle("open"); }
+
+// Фоны по настроению
+const moodBackgrounds = {
+  peace: { light: "url('wallp.jpg') center/cover fixed no-repeat", dark: "url('wallp2.jpg') center/cover fixed no-repeat" },
+  energy: "url('2.gif') center/cover fixed no-repeat",
+  mystic: "url('https://wallpapers-clan.com/wp-content/uploads/2024/03/starfall-night-sky-mountains-aesthetic-gif-preview-desktop-wallpaper.gif') center/cover fixed no-repeat"
+};
+
+// Авто-тема день/ночь
+function applyAutoTheme() {
+  const h = new Date().getHours();
+  document.body.classList.toggle("dark", h>19||h<7);
+}
+
+// Выбор темы
+function setTheme(v){
+  localStorage.theme=v;
+
+  if(document.body.classList.contains("peace")){
+    let theme;
+    if(v==="auto") theme = (new Date().getHours()>19||new Date().getHours()<7) ? "dark" : "light";
+    else theme = v;
+    document.body.style.background = moodBackgrounds.peace[theme];
+  }
+
+  document.body.classList.toggle("dark", v==="dark" || (v==="auto" && (new Date().getHours()>19||new Date().getHours()<7)));
+}
+
+// Выбор настроения
+function setMood(v){
+  localStorage.mood=v;
+  document.body.classList.remove("peace","energy","mystic");
+  document.body.classList.add(v);
+
+  if(v==="peace"){
+    let theme = localStorage.theme === "dark" || (localStorage.theme==="auto" && (new Date().getHours()>19||new Date().getHours()<7)) ? "dark" : "light";
+    document.body.style.background = moodBackgrounds.peace[theme];
+  } else {
+    document.body.style.background = moodBackgrounds[v];
+  }
+}
+
+// Инициализация
+setTheme(localStorage.theme||"auto");
+setMood(localStorage.mood||"peace");
+
+// Музыка
+const musicBtn=document.getElementById("music-btn");
+const bgMusic=document.getElementById("bg-music");
+let musicOn=false;
+musicBtn.onclick=()=>{
+  if(!musicOn){bgMusic.play().catch(()=>{});musicBtn.textContent="🔇 Музыка";musicOn=true;}
+  else{bgMusic.pause();musicBtn.textContent="🎵 Музыка";musicOn=false;}
+};
+</script>
+
+</body>
+</html>
