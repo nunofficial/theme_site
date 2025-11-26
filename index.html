@@ -25,14 +25,14 @@ header {
   position: fixed;
   top: 0;
   width: 100%;
-  padding: 15px 20px; /* Добавил отступы по бокам */
+  padding: 15px 20px;
   background: rgba(0,0,0,0.25);
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 100;
-  box-sizing: border-box; /* Важно для padding */
+  box-sizing: border-box;
 }
 
 .logo { font-size: 22px; font-weight: bold; color: var(--accent); }
@@ -56,7 +56,7 @@ section {
   padding: 130px 20px 80px;
   opacity: 0; transform: translateY(50px);
   transition: .8s;
-  box-sizing: border-box; /* Важно для padding */
+  box-sizing: border-box;
 }
 
 section.visible {
@@ -71,7 +71,7 @@ button, select {
   font-weight: bold;
   cursor: pointer;
   border-radius: 6px;
-  font-family: inherit; /* Наследуем шрифт */
+  font-family: inherit;
 }
 
 /* Cards */
@@ -85,25 +85,19 @@ button, select {
   color: white;
 }
 
-/* =====================================
-  ✨✨✨ ВОТ ТУТ ИСПРАВЛЕНИЯ ✨✨✨
-  =====================================
-*/
-
-/* 1. Стили для сеток с карточками (бывший inline-style) */
+/* Сетки с карточками */
 .reasons-grid {
   margin-top: 40px;
   display: grid;
-  /* На десктопе 3 колонки, как и было */
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 20px;
   max-width: 900px;
-  width: 100%; /* Занимает всю ширину секции */
+  width: 100%;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* 2. Стили для кнопок-выпадашек */
+/* Стили для кнопок-выпадашек */
 .controls-container {
   margin-top: 20px;
   display: flex;
@@ -120,24 +114,20 @@ footer {
   font-size: 14px;
 }
 
-/* =====================================
-  ✨✨✨ ГЛАВНЫЙ ФИКС ДЛЯ МОБИЛКИ ✨✨✨
-  =====================================
-*/
+/* ГЛАВНЫЙ ФИКС ДЛЯ МОБИЛКИ */
 @media(max-width:768px){
   nav { display: none; position: absolute; right: 15px; top: 65px; background:#0009; padding:10px; border-radius:10px; }
   nav.open { display:block; }
   nav a{ display:block; margin:10px 0; }
   .burger { display:block; }
   
-  /* 3. Заставляем карточки вставать в 2 колонки */
+  /* Заставляем карточки вставать в 2 колонки */
   .reasons-grid {
-    /* Жестко говорим: 2 колонки! */
     grid-template-columns: 1fr 1fr;
-    gap: 10px; /* Чуть уменьшим отступ */
+    gap: 10px;
   }
 
-  /* 4. Заставляем селекты вставать друг под друга */
+  /* Заставляем селекты вставать друг под друга */
   .controls-container {
     flex-direction: column;
     align-items: center;
@@ -145,12 +135,11 @@ footer {
   }
   
   .controls-container select {
-    width: 90%; /* Делаем их пошире */
+    width: 90%;
     max-width: 350px;
   }
 }
 
-/* ... (Остальные твои стили без изменений) ... */
 .hero-title {
   display: inline-block;
   background: rgba(0, 0, 0, 0.45);
@@ -238,50 +227,105 @@ document.querySelectorAll("section").forEach(s=>obs.observe(s));
 // Burger menu
 function toggleMenu(){ document.querySelector("nav").classList.toggle("open"); }
 
-// Авто-тема день/ночь
-function applyAutoTheme() {
-  const h=new Date().getHours();
-  document.body.classList.toggle("dark", h>19||h<7);
-}
-
-// Выбор темы
-function setTheme(v){
-  localStorage.theme=v;
-
-  // только если настроение — уютный
-  if(document.body.classList.contains("peace")){
-    let theme;
-    if(v==="auto") theme = (new Date().getHours()>19||new Date().getHours()<7) ? "dark" : "light";
-    else theme = v;
-    document.body.style.background = moodBackgrounds.peace[theme];
-  }
-
-  document.body.classList.toggle("dark", v==="dark" || (v==="auto" && new Date().getHours()>19||new Date().getHours()<7));
-}
-
 // Фоны под настроение
 const moodBackgrounds = {
-  peace: { light: "url('wallp.jpg') center/cover fixed no-repeat", dark: "url('wallp2.jpg') center/cover fixed no-repeat" },
-  energy: "url('2.gif') center/cover fixed no-repeat",
-  mystic: "url('mistic.gif') center/cover fixed no-repeat"
+  peace: { 
+    light: "url('wallp.jpg') center/cover fixed no-repeat", 
+    dark: "url('wallp2.jpg') center/cover fixed no-repeat" 
+  },
+  energy: { 
+    light: "url('2.gif') center/cover fixed no-repeat", 
+    dark: "url('2.gif') center/cover fixed no-repeat" 
+  }, 
+  mystic: { 
+    light: "url('mistic.gif') center/cover fixed no-repeat", 
+    dark: "url('mistic.gif') center/cover fixed no-repeat" 
+  } 
 };
 
-// Выбор настроения
+/**
+ * ☕ setMood: Устанавливает настроение.
+ * Требование 1: При смене настроения (на любое) ТЕМА сбрасывается на 'auto'.
+ */
 function setMood(v){
+  localStorage.mood = v; 
+
+  // 1. Меняем классы настроения
   document.body.classList.remove("peace","energy","mystic");
   document.body.classList.add(v);
 
-  if(v==="peace"){
-    let theme = localStorage.theme === "dark" || (localStorage.theme==="auto" && (new Date().getHours()>19||new Date().getHours()<7)) ? "dark" : "light";
-    document.body.style.background = moodBackgrounds.peace[theme];
-  } else {
-    document.body.style.background = moodBackgrounds[v];
+  // 2. Сброс Темы на "Авто" и обновление селекта
+  const newTheme = 'auto';
+  localStorage.theme = newTheme; 
+  document.getElementById('themeSelect').value = newTheme; 
+  
+  // 3. Обновляем фон с темой 'auto'
+  setTheme(newTheme); 
+}
+
+/**
+ * 🌙 setTheme: Устанавливает тему (День/Ночь/Авто) и меняет фон.
+ * Требование 2: Если пользователь в Энергичном/Загадочном режиме и
+ * вручную выбирает День или Ночь, сайт СБРАСЫВАЕТСЯ в режим "Уютный".
+ */
+function setTheme(v){
+  // 1. Читаем текущее настроение (ДО смены темы)
+  let currentMood = document.body.classList.contains("energy") ? "energy" : 
+                    document.body.classList.contains("mystic") ? "mystic" : 
+                    "peace";
+
+  // 2. ГЛАВНАЯ ЛОГИКА СБРОСА НАСТРОЕНИЯ:
+  if ((currentMood === 'energy' || currentMood === 'mystic') && (v === 'light' || v === 'dark')) {
+    
+    // Переключаем на Уютный (Peace)
+    const revertMood = 'peace';
+    
+    // Обновляем localStorage и селект настроения
+    localStorage.mood = revertMood;
+    document.getElementById('moodSelect').value = revertMood;
+    
+    // Обновляем классы body
+    document.body.classList.remove("energy","mystic");
+    document.body.classList.add(revertMood);
+
+    // Устанавливаем Уютный как текущее настроение для дальнейшей работы
+    currentMood = revertMood; 
+  }
+  
+  // 3. Сохраняем новую тему
+  localStorage.theme = v; 
+
+  // 4. Логика вычисления: День или Ночь? 
+  const hours = new Date().getHours();
+  const isAutoDark = (hours > 19 || hours < 7);
+  const isDark = v === "dark" || (v === "auto" && isAutoDark);
+
+  // 5. Ставим класс 'dark' на body 
+  document.body.classList.toggle("dark", isDark);
+
+  // 6. Выбираем ключ фона: light или dark
+  const bgType = isDark ? "dark" : "light";
+
+  // 7. Применяем фон.
+  if (moodBackgrounds[currentMood] && moodBackgrounds[currentMood][bgType]) {
+    document.body.style.background = moodBackgrounds[currentMood][bgType];
   }
 }
 
-// Инициализация
-setTheme(localStorage.theme||"auto");
-setMood("peace");
+// --- ИНИЦИАЛИЗАЦИЯ ПРИ ЗАГРУЗКЕ ---
+const initialMood = localStorage.mood || "peace";
+const initialTheme = localStorage.theme || "auto";
+
+// 1. Устанавливаем начальные значения в селекты
+document.getElementById('moodSelect').value = initialMood;
+document.getElementById('themeSelect').value = initialTheme;
+
+// 2. Применяем класс настроения
+document.body.classList.add(initialMood);
+
+// 3. Запускаем setTheme для установки темы, класса dark и фона.
+setTheme(initialTheme);
+
 
 // Музыка
 const musicBtn=document.getElementById("music-btn");
